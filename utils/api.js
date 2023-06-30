@@ -30,16 +30,16 @@ exports.fetchAndInsertData = async () => {
     );
     const carts = cartsResponse.data;
 
-    // Fetch Categories
-    const categoriesResponse = await axios.get(
-      "https://fakestoreapi.com/products/categories"
-    );
+    // // Fetch Categories
+    // const categoriesResponse = await axios.get(
+    //   "https://fakestoreapi.com/products/categories"
+    // );
 
-    const categories = categoriesResponse.data;
+    // const categories = categoriesResponse.data;
 
-    // Inset categories into the database
-    await Category.insertMany(categories);
-    console.log("Categories fetched successfully");
+    // // Inset categories into the database
+    // await Category.insertMany(categories);
+    // console.log("Categories fetched successfully");
 
     // Insert products into the database
     await Product.insertMany(products);
