@@ -14,15 +14,13 @@ exports.getAllUsers = (req, res) => {
 };
 
 // Create a cart (User)
-exports.createCart = (req, res) => {
+// exports.createCart = (req, res) => {};
 
-};
+// exports.updateCart = (req, res) => {};
 
-exports.updateCart = (req, res) => {};
+// exports.deleteCart = (req, res) => {};
 
-exports.deleteCart = (req, res) => {};
-
-exports.getCart = (req, res) => {};
+// exports.getCart = (req, res) => {};
 
 // Get a specific user by ID
 exports.getUserById = (req, res) => {
@@ -128,7 +126,7 @@ exports.createUser = (req, res) => {
   });
 };
 
-//  Handle login 
+//  Handle login
 exports.login = (req, res) => {
   const { username, password } = req.body;
 
@@ -157,8 +155,6 @@ exports.login = (req, res) => {
       res.status(500).send(err);
     });
 };
-
-
 
 exports.logout = (req, res) => {
   // Perform any logout actions (e.g., clear session, token, etc.)
