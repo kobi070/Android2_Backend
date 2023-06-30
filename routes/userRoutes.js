@@ -13,7 +13,7 @@ router.use(UserController.authenticateUser);
 router.get("/user-action", UserController.userAction);
 
 // test porpuse get all users
-router.get("/", UserController.getAllUsers());
+router.get("/", UserController.getAllUsers);
 
 
 // Admin routes (requires authentication and admin role)
