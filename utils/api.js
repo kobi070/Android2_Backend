@@ -31,7 +31,7 @@ exports.fetchAndInsertData = async () => {
     const carts = cartsResponse.data;
 
     // Fetch Categories
-    const categoriesResponse = fetch(
+    const categoriesResponse = await axios.get(
       "https://fakestoreapi.com/products/categories"
     );
 
