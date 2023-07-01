@@ -9,6 +9,16 @@ exports.fetchAndInsertData = async () => {
   try {
     console.log("Fetching Products, Users, Categories, and Carts");
 
+    const prod1 = async () => {
+      var kaki;
+      for (let index = 0; index < 100; index += 15) {
+        const prodRes = await axios.get(`
+        https://dummyjson.com/products?skip=${index}&limit=${(index += 15)}`);
+        kaki.push(...prodRes.data);
+      };
+      return kaki;
+    };
+
     // Fetch products
     const productLimit = 100;
     const productsResponse = await axios.get(
@@ -42,7 +52,7 @@ exports.fetchAndInsertData = async () => {
     // console.log("Categories fetched successfully");
 
     // Insert products into the database
-    await Product.insertMany(products);
+    await Product.insertMany(prod);
     console.log("Products fetched and inserted successfully!");
 
     // Insert users into the database
