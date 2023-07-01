@@ -52,7 +52,7 @@ exports.fetchAndInsertData = async () => {
     // console.log("Categories fetched successfully");
 
     // Insert products into the database
-    await Product.insertMany(prod);
+    await Product.insertMany(products);
     console.log("Products fetched and inserted successfully!");
 
     // Insert users into the database
