@@ -1,115 +1,79 @@
-const fetch = require("node-fetch");
 const mongoose = require("mongoose");
+const axios = require("axios");
 const User = require("../models/User");
-const Cart = require("../models/Cart");
 const Product = require("../models/Product");
+const Cart = require("../models/Cart");
 
-// Connect to MongoDB Atlas
-// mongoose.connect('mongodb+srv://<username>:<password>@<cluster-url>/<database-name>', {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// })
-//   .then(() => {
-//     console.log('Connected to MongoDB Atlas');
-//     populateDatabase();
-//   })
-//   .catch((error) => {
-//     console.error('Error connecting to MongoDB Atlas:', error);
-//   });
-
-// Populate the database with dummy data
-exports.populateDatabase = async () => {
+async function connectToDB() {
+  const uri = process.env.MONGO_URI;
   try {
-    // Create users
-    await createUsers();
+    await mongoose.connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log("Connected to MongoDB Atlas");
 
-    // Create carts
-    await createCarts();
+    const productCollection = mongoose.connection.collection("products");
+    const userCollection = mongoose.connection.collection("users");
+    const cartCollection = mongoose.connection.collection("carts");
 
-    // Create products
-    await createProducts();
+    // Clear existing data (optional)
+    await productCollection.deleteMany({});
+    await userCollection.deleteMany({});
+    await cartCollection.deleteMany({});
 
-    console.log("Database population completed");
-    process.exit(0);
+    const fetchAndInsertProducts = async () => {
+      for (let index = 1; index < 100; index++) {
+        const productsResponse = await axios.get(
+          `https://dummyjson.com/products/${index}`
+        );
+        const productsData = productsResponse.data;
+        if (productsData) {
+          console.log("inserting products");
+          await Product.insertMany(productsData);
+        }
+      }
+    };
+
+    const fetchAndInsertUsers = async () => {
+      for (let index = 1; index < 100; index++) {
+        const usersResponse = await axios.get(
+          `https://dummyjson.com/users/${index}`
+        );
+        const usersData = usersResponse.data;
+        if (usersData) {
+          console.log("inserting users");
+          await User.insertMany(usersData);
+        }
+      }
+    };
+
+    const fetchAndInsertCarts = async () => {
+      for (let i = 1; i <= 20; i++) {
+        const cartsResponse = await axios.get(
+          `https://dummyjson.com/carts/${i}`
+        );
+        const cartsData = cartsResponse.data;
+        if (cartsData) {
+          console.log("inserting carts");
+          await Cart.insertMany(cartsData);
+        }
+      }
+    };
+
+    await Promise.all([
+      fetchAndInsertProducts(),
+      fetchAndInsertUsers(),
+      fetchAndInsertCarts(),
+    ]);
+
+    console.log("Database populated");
+    return mongoose.connection;
   } catch (error) {
-    console.error("Error populating database:", error);
-    process.exit(1);
-  }
-};
-// async function populateDatabase() {}
-
-// Create users
-async function createUsers() {
-  for (let i = 0; i < 100; i += 30) {
-    const url = `https://dummyjson.com/users?limit=30&page=${Math.ceil(
-      i / 30
-    )}`;
-    const response = await fetch(url, {
-      headers: {
-        "app-id": "<your-dummyapi-app-id>",
-      },
-    });
-    const { data: users } = await response.json();
-
-    const userDocuments = users.map((user) => {
-      return new User({
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        // Additional user properties
-      });
-    });
-
-    await User.insertMany(userDocuments);
+    console.error("Error connecting to MongoDB Atlas", error);
+    throw error;
   }
 }
 
-// Create carts
-async function createCarts() {
-  for (let i = 1; i <= 100; i += 30) {
-    const url = `https://dummyapi.io/data/api/cart?limit=30&page=${Math.ceil(
-      i / 30
-    )}`;
-    const response = await fetch(url, {
-      headers: {
-        "app-id": "<your-dummyapi-app-id>",
-      },
-    });
-    const { data: carts } = await response.json();
 
-    const cartDocuments = carts.map((cart) => {
-      return new Cart({
-        userId: cart.userId,
-        products: cart.products,
-        // Additional cart properties
-      });
-    });
-
-    await Cart.insertMany(cartDocuments);
-  }
-}
-
-// Create products
-async function createProducts() {
-  for (let i = 1; i <= 100; i += 30) {
-    const url = `https://dummyapi.io/data/api/product?limit=30&page=${Math.ceil(
-      i / 30
-    )}`;
-    const response = await fetch(url, {
-      headers: {
-        "app-id": "<your-dummyapi-app-id>",
-      },
-    });
-    const { data: products } = await response.json();
-
-    const productDocuments = products.map((product) => {
-      return new Product({
-        name: product.name,
-        price: product.price,
-        // Additional product properties
-      });
-    });
-
-    await Product.insertMany(productDocuments);
-  }
-}
+module.exports = connectToDB;
