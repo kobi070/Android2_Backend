@@ -24,39 +24,57 @@ async function connectToDB() {
 
     const fetchAndInsertProducts = async () => {
       for (let index = 1; index < 100; index++) {
-        const productsResponse = await axios.get(
-          `https://dummyjson.com/products/${index}`
-        );
-        const productsData = productsResponse.data;
-        if (productsData) {
-          console.log("inserting products");
-          await Product.insertMany(productsData);
+        try {
+          const productsResponse = await axios.get(
+            `https://dummyjson.com/products/${index}`
+          );
+          const productsData = productsResponse.data;
+          if (productsData) {
+            console.log("inserting products");
+            await Product.insertMany(productsData);
+          }
+        } catch (error) {
+          console.error("Error fetching products:", error);
+          await delay(60000); // Delay for 1 second (1000 milliseconds)
+          index--; // Retry the same index
         }
       }
     };
 
     const fetchAndInsertUsers = async () => {
       for (let index = 1; index < 100; index++) {
-        const usersResponse = await axios.get(
-          `https://dummyjson.com/users/${index}`
-        );
-        const usersData = usersResponse.data;
-        if (usersData) {
-          console.log("inserting users");
-          await User.insertMany(usersData);
+        try {
+          const usersResponse = await axios.get(
+            `https://dummyjson.com/users/${index}`
+          );
+          const usersData = usersResponse.data;
+          if (usersData) {
+            console.log("inserting users");
+            await User.insertMany(usersData);
+          }
+        } catch (error) {
+          console.error("Error fetching users:", error);
+          await delay(60000); // Delay for 1 second (1000 milliseconds)
+          index--; // Retry the same index
         }
       }
     };
 
     const fetchAndInsertCarts = async () => {
       for (let i = 1; i <= 20; i++) {
-        const cartsResponse = await axios.get(
-          `https://dummyjson.com/carts/${i}`
-        );
-        const cartsData = cartsResponse.data;
-        if (cartsData) {
-          console.log("inserting carts");
-          await Cart.insertMany(cartsData);
+        try {
+          const cartsResponse = await axios.get(
+            `https://dummyjson.com/carts/${i}`
+          );
+          const cartsData = cartsResponse.data;
+          if (cartsData) {
+            console.log("inserting carts");
+            await Cart.insertMany(cartsData);
+          }
+        } catch (error) {
+          console.error("Error fetching carts:", error);
+          await delay(60000); // Delay for 1 second (1000 milliseconds)
+          i--; // Retry the same index
         }
       }
     };
@@ -75,5 +93,8 @@ async function connectToDB() {
   }
 }
 
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 module.exports = connectToDB;
