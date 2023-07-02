@@ -9,47 +9,44 @@ exports.fetchAndInsertData = async () => {
   try {
     console.log("Fetching Products, Users, Categories, and Carts");
 
-    const prod1 = async () => {
-      var kaki;
-      for (let index = 0; index < 100; index += 15) {
-        const prodRes = await axios.get(`
-        https://dummyjson.com/products?skip=${index}&limit=${(index += 15)}`);
-        kaki.push(...prodRes.data);
-      };
-      return kaki;
-    };
-
+    // Clear existing data from the database
+    console.log("Clearing existing data from the database");
+    await User.deleteMany({});
+    await Product.deleteMany({});
+    await Cart.deleteMany({});
+    await Category.deleteMany({});
+    
     // Fetch products
-    const productLimit = 100;
+    const productLimit = 20;
     const productsResponse = await axios.get(
       `https://fakestoreapi.com/products?limit=${productLimit}`
     );
     const products = productsResponse.data;
 
     // Fetch users
-    const userLimit = 100;
+    const userLimit = 20;
     const usersResponse = await axios.get(
       `https://fakestoreapi.com/users?limit=${userLimit}`
     );
     const users = usersResponse.data;
 
     // Fetch carts
-    const cartLimit = 100;
+    const cartLimit = 20;
     const cartsResponse = await axios.get(
       `https://fakestoreapi.com/carts?limit=${cartLimit}`
     );
     const carts = cartsResponse.data;
 
-    // // Fetch Categories
-    // const categoriesResponse = await axios.get(
-    //   "https://fakestoreapi.com/products/categories"
-    // );
+    // Fetch Categories
+    const categoriesResponse = fetch(
+      "https://fakestoreapi.com/products/categories"
+    );
 
-    // const categories = categoriesResponse.data;
+    const categories = categoriesResponse.data;
 
-    // // Inset categories into the database
-    // await Category.insertMany(categories);
-    // console.log("Categories fetched successfully");
+    // Inset categories into the database
+    await Category.insertMany(categories);
+    console.log("Categories fetched successfully");
 
     // Insert products into the database
     await Product.insertMany(products);

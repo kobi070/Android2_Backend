@@ -18,12 +18,13 @@ const usersSchema = new mongoose.Schema({
       long: Number
     },
     phone: String,
-    role: {
-      type: String,
-      enum: ['user', 'admin'],
-      default: 'user',
-    },
   },
+  role: {
+    type: String,
+    enum: ['user', 'admin'],
+    default: 'user',
+  },
+  token: String,
 });
 
 const Users = mongoose.model("Users", usersSchema);

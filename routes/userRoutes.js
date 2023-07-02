@@ -8,17 +8,13 @@ router.post("/register", UserController.createUser);
 router.post("/login", UserController.login);
 // Logout
 router.get("/logout", UserController.logout);
-// User routes (requires authentication)
+// User authentication
 router.use(UserController.authenticateUser);
-router.get("/user-action", UserController.userAction);
 
-// test porpuse get all users
-router.get("/", UserController.getAllUsers);
 
 
 // Admin routes (requires authentication and admin role)
 router.use(UserController.authenticateUser);
-router.use(UserController.adminAction);
 // Get all users (admin only)
 router.get("/", UserController.getAllUsers);
 // Get a specific user by ID (admin only)

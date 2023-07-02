@@ -13,15 +13,6 @@ exports.getAllUsers = (req, res) => {
     });
 };
 
-// Create a cart (User)
-// exports.createCart = (req, res) => {};
-
-// exports.updateCart = (req, res) => {};
-
-// exports.deleteCart = (req, res) => {};
-
-// exports.getCart = (req, res) => {};
-
 // Get a specific user by ID
 exports.getUserById = (req, res) => {
   const userId = req.params.id;
@@ -100,30 +91,53 @@ exports.authenticateUserViaAPI = (username, password) => {
 };
 
 // Create a new user
-exports.createUser = (req, res) => {
-  const { username, password, isAdmin } = req.body;
-
-  // Hash the password
-  bcrypt.hash(password, 10, (err, hashedPassword) => {
-    if (err) {
-      res.status(500).send(err);
-    } else {
-      const user = new User({
-        username,
-        password: hashedPassword,
-        isAdmin,
-      });
-
-      user
-        .save()
-        .then(() => {
-          res.status(201).send(user);
-        })
-        .catch((err) => {
-          res.status(400).send(err);
-        });
+exports.createUser = async (req, res) => {
+  try {
+    console.log("Creating user");
+    // Get specific data to create a new user
+    const { username, password, name, address, phone, email, isAdmin } =
+      req.query;
+    if (!username || !password || !email || !address || !phone || !name) {
+      // Verify the user
+      console.log("all input is required");
+      response.status(404).send("All input is required");
     }
-  });
+
+    const toggleAdmin = !isAdmin ? "user" : "admin";
+
+    // Check if user is already existing
+    // Validate if the user is already in our database
+    const oldUser = await User.findOneAndDelete({ email });
+    if (oldUser) {
+      response.status(409).send("User already exists");
+    }
+    //Encrypt user password
+    encryptedPassword = await bcrypt.hash(password, 10);
+
+    // Create a new user
+    const user = await User.create({
+      username,
+      name,
+      phone,
+      addresses: {
+        city: address,
+      },
+      email,
+      role: toggleAdmin,
+      password: encryptedPassword,
+    });
+
+    // Get a token from jwt
+    const token = jwt.sign({ user_id: user.id, email }, process.env.TOKEN_KEY, {
+      expiresIn: "2h",
+    });
+    // Assignt the token to the user
+    user.token = token;
+    // return the user
+    res.status(200).json(user);
+  } catch (error) {
+    console.log(`Error: ${error}`);
+  }
 };
 
 //  Handle login
