@@ -3,22 +3,22 @@ const mongoose = require("mongoose");
 const cartSchema = new mongoose.Schema({
   id: Number,
   user_id: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Number,
     ref: "User",
-    localField: "user_id", // Specify the local field to reference in the current schema
-    foreignField: "id", // Specify the foreign field in the referenced schema
+    localField: "user_id",
+    foreignField: "id",
   },
   date: Date,
   products: [
     {
       product: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Number,
         ref: "Product",
-        localField: "productId", // Specify the local field to reference in the current schema
-        foreignField: "id", // Specify the foreign field in the referenced schema
+        localField: "products.product",
+        foreignField: "id",
       },
       quantity: Number,
-    }
+    },
   ],
 });
 
