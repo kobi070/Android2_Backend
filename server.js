@@ -1,17 +1,13 @@
 require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
 const cors = require("cors");
-const axios = require("axios");
 const port = process.env.PORT;
 
-const api = require("./utils/api");
 const connectToDB = require("./utils/db");
 const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/productRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const categoriesRoutes = require("./routes/categoriesRoutes");
-const Product = require("./models/Product");
 
 const app = express();
 
