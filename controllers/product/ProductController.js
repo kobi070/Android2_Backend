@@ -20,10 +20,42 @@ exports.getProductById = async (req, res) => {
     if (product) {
       res.status(200).json(product);
     } else {
-      res.status(404).json({ error: "Product not found" });
+      res.status(404).json({ error: "Product id not found" });
     }
   } catch (error) {
     res.status(500).json({ error: "Error fetching product" });
+  }
+};
+
+// Get product by name
+exports.getProductByName = async (req, res) => {
+  const { title } = req.params;
+
+  try {
+    const product = await Product.findOne({ title: title });
+    if (product) {
+      res.status(200).json(product);
+    } else {
+      res.status(404).json({ error: "Product name not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: `Error fetching product - ${err}` });
+  }
+};
+
+// Get product by category
+exports.getProductByCategory = async (req, res) => {
+  const category = req.params.name;
+
+  try {
+    const product = await Product.findOne({ category: category });
+    if (product) {
+      res.status(200).json(product);
+    } else {
+      res.status(404).json({ error: "Product category not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: `Error fetching product - ${err}` });
   }
 };
 
