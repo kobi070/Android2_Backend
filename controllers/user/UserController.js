@@ -60,35 +60,6 @@ exports.deleteUser = (req, res) => {
       res.status(500).send(err);
     });
 };
-exports.authenticateUserViaAPI = (username, password) => {
-  return fetch("https://fakestoreapi.com/auth/login", {
-    method: "POST",
-    body: JSON.stringify({
-      username: username,
-      password: password,
-    }),
-  })
-    .then((res) => {
-      if (res.status === 200) {
-        // Authentication successful
-        console.log("Authentication successful");
-        return res.json();
-      } else {
-        // Authentication failed
-        throw new Error(`Authentication failed. Status: ${res.status}`);
-      }
-    })
-    .then((json) => {
-      console.log(json); // You can customize the logic here based on the response
-      // Allow the user to login or perform further actions
-      return json;
-    })
-    .catch((error) => {
-      console.error(error); // Handle any errors that occurred during authentication
-      // Return an appropriate response, such as 404 or 500
-      return error;
-    });
-};
 
 // Create a new user
 exports.createUser = async (req, res) => {
