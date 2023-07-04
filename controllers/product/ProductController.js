@@ -80,6 +80,49 @@ exports.createProduct = async (req, res) => {
   }
 };
 
+// Group By - Average Spending per User
+exports.averageSpendingByUser = async (req, res) => {
+  try {
+    const result = await Cart.aggregate([
+      {
+        $group: {
+          _id: "$user_id",
+          averageSpending: { $avg: { $sum: "$products.quantity" } }
+        }
+      }
+    ]);
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: "Error performing group by operation" });
+  }
+};
+
+// Map-Reduce - Total Revenue per Product Category
+exports.totalRevenueByCategory = async (req, res) => {
+  try {
+    const mapFunction = function () {
+      emit(this.category, this.price * this.quantity);
+    };
+
+    const reduceFunction = function (key, values) {
+      return Array.sum(values);
+    };
+
+    const options = {
+      query: {}, // Add any additional filtering criteria here
+      scope: { Product }, // Pass additional variables to the map and reduce functions if needed
+      out: { inline: 1 }
+    };
+
+    const result = await Cart.mapReduce(mapFunction, reduceFunction, options);
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: "Error performing map-reduce operation" });
+  }
+};
+
 // Update a product
 exports.updateProduct = async (req, res) => {
   const productId = req.params.productId;
