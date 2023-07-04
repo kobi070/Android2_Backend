@@ -3,6 +3,7 @@ const axios = require("axios");
 const User = require("../models/User");
 const Product = require("../models/Product");
 const Cart = require("../models/Cart");
+const Category = require("../models/Category");
 
 async function connectToDB() {
   const uri = process.env.MONGO_URI;
@@ -16,11 +17,13 @@ async function connectToDB() {
     const productCollection = mongoose.connection.collection("products");
     const userCollection = mongoose.connection.collection("users");
     const cartCollection = mongoose.connection.collection("carts");
+    const categoryCollection = mongoose.connection.collection("categories");
 
     // Clear existing data (optional)
     await productCollection.deleteMany({});
     await userCollection.deleteMany({});
     await cartCollection.deleteMany({});
+    await categoryCollection.deleteMany({});
 
     const fetchAndInsertProducts = async () => {
       for (let index = 1; index < 100; index++) {
@@ -35,7 +38,7 @@ async function connectToDB() {
           }
         } catch (error) {
           console.error("Error fetching products:", error);
-          await delay(60000); // Delay for 1 second (1000 milliseconds)
+          await delay(60000); // Delay for 60 second (60000 milliseconds)
           index--; // Retry the same index
         }
       }
@@ -78,6 +81,13 @@ async function connectToDB() {
         }
       }
     };
+
+    const categoriesResponse = await axios.get("https://dummyjson.com/products/categories");
+    const categoriesData = await categoriesResponse.data;
+    console.log(categoriesData);
+
+    await Category.insertMany(categoriesData.map(category => new Category({title: category})));
+
 
     await Promise.all([
       fetchAndInsertProducts(),
