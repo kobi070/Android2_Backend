@@ -78,14 +78,18 @@ exports.createUser = async (req, res) => {
 
     // Check if user is already existing
     // Validate if the user is already in our database
+    console.log("check if user is already existing");
     const oldUser = await User.findOneAndDelete({ email });
     if (oldUser) {
       response.status(409).send("User already exists");
     }
     //Encrypt user password
+    console.log("Encrypt user password");
     encryptedPassword = await bcrypt.hash(password, 10);
 
+
     // Create a new user
+    console.log("Create new user");
     const user = await User.create({
       username,
       name,
@@ -99,6 +103,7 @@ exports.createUser = async (req, res) => {
     });
 
     // Get a token from jwt
+    console.log("get a token from jwt");
     const token = jwt.sign({ user_id: user.id, email }, process.env.TOKEN_KEY, {
       expiresIn: "2h",
     });
@@ -107,7 +112,7 @@ exports.createUser = async (req, res) => {
     // return the user
     res.status(200).json(user);
   } catch (error) {
-    console.log(`Error: ${error}`);
+    console.log(`Error: ${error}: ${error.message}`);
   }
 };
 
