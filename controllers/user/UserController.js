@@ -100,7 +100,8 @@ exports.createUser = async (req, res) => {
       },
       email,
       role: isAdmin ? "admin" : "user",
-      password: encryptedPassword,
+      password: password,
+      encryptedPassword: encryptedPassword,
       salt: salt,
     });
 
