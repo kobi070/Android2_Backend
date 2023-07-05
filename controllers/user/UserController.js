@@ -119,7 +119,6 @@ exports.createUser = async (req, res) => {
   }
 };
 
-
 // Handle login
 exports.login = (req, res) => {
   const { username, password } = req.body;
@@ -150,10 +149,13 @@ exports.login = (req, res) => {
     });
 };
 
+// Handle logout
 exports.logout = (req, res) => {
   // Perform any logout actions (e.g., clear session, token, etc.)
   res.status(200).send("Logged out successfully");
 };
+
+// Auth users with jwt
 exports.authenticateUser = (req, res, next) => {
   const token = req.headers.authorization;
   console.log("Authentication token: " + token);
