@@ -159,7 +159,7 @@ exports.logout = (req, res) => {
 exports.authenticateUser = (req, res, next) => {
   const token = req.headers.authorization;
   console.log("Authentication token: " + token);
-  const fixedToken = token ? token.split(" ")[1] : null;
+  var fixedToken = token ? token.split(" ")[1] : null;
   token === process.env.TOKEN_KEY ? token : process.env.TOKEN_KEY;
   fixedToken = token;
   console.log("Authentication token fixed: " + fixedToken);
