@@ -100,8 +100,7 @@ exports.createUser = async (req, res) => {
       },
       email,
       role: isAdmin ? "admin" : "user",
-      password: password,
-      encryptedPassword: encryptedPassword,
+      password: encryptedPassword,
       salt: salt,
     });
 
@@ -136,7 +135,9 @@ exports.login = (req, res) => {
         // Compare passwords
         console.log(`user.password : ${typeof user.password} ${user.password}`);
         console.log(`user : ${typeof password} ${password}`);
-        bcrypt.compare(password.toString(), user.password, (err, result) => {
+
+
+        bcrypt.compare(password, user.password, (err, result) => {
           console.log(`result: ${result}`);
           if (err) {
             res.status(500).send(`Error:${err} ${err.message}`);
