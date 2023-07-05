@@ -67,7 +67,8 @@ exports.createUser = async (req, res) => {
   try {
     console.log("Creating user");
     // Get specific data to create a new user
-    const { username, password, name, address, phone, email, isAdmin } = req.query;
+    const { username, password, name, address, phone, email, isAdmin } =
+      req.query;
     if (!username || !password || !email || !address || !phone || !name) {
       // Verify the user
       console.log(`${username} 
@@ -82,12 +83,12 @@ exports.createUser = async (req, res) => {
 
     // Generate a random salt
     const salt = Math.random().toString();
-    
+
     // Combine the password and salt
     const saltedPassword = password + salt;
 
     // Hash the salted password
-    const encryptedPassword = await bcrypt.hash(saltedPassword, 10);
+    const encryptedPassword = await bcrypt.hash(password, 10);
 
     // Create a new user
     console.log("Create new user");
@@ -101,7 +102,6 @@ exports.createUser = async (req, res) => {
       email,
       role: isAdmin ? "admin" : "user",
       password: encryptedPassword,
-      salt: salt,
     });
 
     // Get a token from jwt
