@@ -121,7 +121,7 @@ exports.createUser = async (req, res) => {
 
 // Handle login
 exports.login = (req, res) => {
-  const { username, password } = req.body;
+  const { username, password } = req.query;
   console.log(`login: ${username} ${password}`);
 
   // Find the user by username
