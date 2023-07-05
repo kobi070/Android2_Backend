@@ -122,10 +122,12 @@ exports.createUser = async (req, res) => {
 // Handle login
 exports.login = (req, res) => {
   const { username, password } = req.body;
+  console.log(`login: ${username} ${password}`);
 
   // Find the user by username
   User.findOne({ username })
     .then((user) => {
+      console.log(`user : ${user}`);
       if (!user) {
         // User not found
         res.status(404).send("User not found");
