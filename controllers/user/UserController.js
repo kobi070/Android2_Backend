@@ -134,7 +134,9 @@ exports.login = (req, res) => {
         res.status(404).send("User not found");
       } else {
         // Compare passwords
-        bcrypt.compare(password, user.password, (err, result) => {
+        console.log(`user.password : ${user.password}`);
+        bcrypt.compare(password.toString(), user.password, (err, result) => {
+          console.log(`result: ${result}`);
           if (err) {
             res.status(500).send(`Error:${err} ${err.message}`);
           } else if (result) {
