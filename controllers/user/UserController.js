@@ -118,44 +118,37 @@ exports.createUser = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
-
 // Handle login
-exports.login = (req, res) => {
+exports.login = async (req, res) => {
   const { username, password } = req.query;
-  console.log(`login: ${username} ${password}`);
+  console.log(`Login: ${username} ${password}`);
 
-  // Find the user by username
-  User.findOne({ username })
-    .then((user) => {
-      console.log(`user : ${user}`);
-      if (!user) {
-        // User not found
-        res.status(404).send("User not found");
-      } else {
-        // Compare passwords
-        console.log(`user.password : ${typeof user.password} ${user.password}`);
-        console.log(`user : ${typeof password} ${password}`);
+  try {
+    // Find the user by username
+    const user = await User.findOne({ username });
+    console.log(`User: ${user}`);
 
+    if (!user) {
+      // User not found
+      return res.status(404).send("User not found");
+    }
 
-        bcrypt.compare(password, user.password, (err, result) => {
-          console.log(`result: ${result}`);
-          if (err) {
-            res.status(500).send(`Error:${err} ${err.message}`);
-          } else if (result) {
-            // Passwords match, authentication successful
-            res.status(200).send("Authentication successful");
-          } else {
-            // Passwords do not match
-            res.status(401).send("Authentication failed");
-          }
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send(err);
-    });
+    // Compare passwords
+    const isMatch = await bcrypt.compare(password, user.password);
+    console.log(`Is match: ${isMatch}`);
+
+    if (isMatch) {
+      // Passwords match, authentication successful
+      res.status(200).send("Authentication successful");
+    } else {
+      // Passwords do not match
+      res.status(401).send("Authentication failed");
+    }
+  } catch (err) {
+    console.log(`Error: ${err}: ${err.message}`);
+    res.status(500).send("Internal Server Error");
+  }
 };
-
 // Handle logout
 exports.logout = (req, res) => {
   // Perform any logout actions (e.g., clear session, token, etc.)
