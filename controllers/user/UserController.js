@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 
 // Get all users
 exports.getAllUsers = (req, res) => {
+  console.log("Fetch all users...");
   User.find()
     .then((users) => {
       res.send(users);
@@ -66,27 +67,27 @@ exports.createUser = async (req, res) => {
   try {
     console.log("Creating user");
     // Get specific data to create a new user
-    const { username, password, name, address, phone, email, isAdmin } =
-      req.query;
+    const { username, password, name, address, phone, email, isAdmin } = req.query;
     if (!username || !password || !email || !address || !phone || !name) {
       // Verify the user
+      console.log(`${username} 
+      ${password}
+      ${email}
+      ${phone}
+      ${name}
+      ${address}`);
       console.log("all input is required");
-      response.status(404).send("All input is required");
+      return res.status(404).send("All input is required");
     }
 
-    const toggleAdmin = !isAdmin ? "user" : "admin";
+    // Generate a random salt
+    const salt = Math.random().toString();
+    
+    // Combine the password and salt
+    const saltedPassword = password + salt;
 
-    // Check if user is already existing
-    // Validate if the user is already in our database
-    console.log("check if user is already existing");
-    const oldUser = await User.findOneAndDelete({ email });
-    if (oldUser) {
-      response.status(409).send("User already exists");
-    }
-    //Encrypt user password
-    console.log("Encrypt user password");
-    encryptedPassword = await bcrypt.hash(password, 10);
-
+    // Hash the salted password
+    const encryptedPassword = await bcrypt.hash(saltedPassword, 10);
 
     // Create a new user
     console.log("Create new user");
@@ -98,8 +99,9 @@ exports.createUser = async (req, res) => {
         city: address,
       },
       email,
-      role: toggleAdmin,
+      role: isAdmin ? "admin" : "user",
       password: encryptedPassword,
+      salt: salt,
     });
 
     // Get a token from jwt
@@ -107,16 +109,18 @@ exports.createUser = async (req, res) => {
     const token = jwt.sign({ user_id: user.id, email }, process.env.TOKEN_KEY, {
       expiresIn: "2h",
     });
-    // Assignt the token to the user
+    // Assign the token to the user
     user.token = token;
     // return the user
     res.status(200).json(user);
   } catch (error) {
     console.log(`Error: ${error}: ${error.message}`);
+    res.status(500).send("Internal Server Error");
   }
 };
 
-//  Handle login
+
+// Handle login
 exports.login = (req, res) => {
   const { username, password } = req.body;
 
@@ -130,7 +134,7 @@ exports.login = (req, res) => {
         // Compare passwords
         bcrypt.compare(password, user.password, (err, result) => {
           if (err) {
-            res.status(500).send(err);
+            res.status(500).send(`Error:${err} ${err.message}`);
           } else if (result) {
             // Passwords match, authentication successful
             res.status(200).send("Authentication successful");
@@ -150,16 +154,22 @@ exports.logout = (req, res) => {
   // Perform any logout actions (e.g., clear session, token, etc.)
   res.status(200).send("Logged out successfully");
 };
-
 exports.authenticateUser = (req, res, next) => {
   const token = req.headers.authorization;
+  console.log("Authentication token: " + token);
+  const fixedToken = token ? token.split(" ")[1] : null;
+  token === process.env.TOKEN_KEY ? token : process.env.TOKEN_KEY;
+  fixedToken = token;
+  console.log("Authentication token fixed: " + fixedToken);
 
-  if (!token) {
+  if (!fixedToken) {
     res.status(401).send("No token provided");
   } else {
-    jwt.verify(token, "secretKey", (err, decoded) => {
+    jwt.verify(fixedToken, process.env.TOKEN_KEY, (err, decoded) => {
+      console.log(err);
+      console.log("decoded:", decoded);
       if (err) {
-        res.status(401).send("Invalid token");
+        res.status(403).send("Invalid token" + err.message);
       } else {
         // Add the decoded user data to the request object
         req.user = decoded;
