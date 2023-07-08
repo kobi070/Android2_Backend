@@ -39,7 +39,7 @@ exports.createCart = async (req, res) => {
       date,
       products,
     });
-    console.log(`Created a new cart: ${newCart.id}`);
+    console.log(`Created a new cart: ${newCart.user_id}`);
     const savedCart = await newCart.save();
     res.status(201).json(savedCart);
   } catch (error) {
