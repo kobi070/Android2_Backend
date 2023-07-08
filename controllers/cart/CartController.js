@@ -104,17 +104,23 @@ exports.deleteCart = async (req, res) => {
     res.status(500).json({ error: "Error deleting cart" });
   }
 };
-
 // Add a product to a cart
 exports.addProductToCart = async (req, res) => {
-  const cartId = req.params.cartId;
-  const { productId, quantity } = req.body;
+  const cartId = req.query.cartId;
+  const productId = req.query.productId;
+  const quantity = req.query.quantity;
 
   try {
     const cart = await Cart.findOne({ id: cartId });
     if (cart) {
+      // Find the product by ID
+      const product = await Product.findOne({ id: productId });
+      if (!product) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+
       // Add the product to the cart's products array
-      cart.products.push({ productId, quantity });
+      cart.products.push({ product, quantity });
       const updatedCart = await cart.save();
       res.status(200).json(updatedCart);
     } else {
@@ -125,10 +131,11 @@ exports.addProductToCart = async (req, res) => {
   }
 };
 
+
 // Remove a product from a cart
 exports.removeProductFromCart = async (req, res) => {
-  const cartId = req.params.cartId;
-  const productId = req.params.productId;
+  const cartId = req.query.cartId;
+  const productId = req.query.productId;
 
   try {
     const cart = await Cart.findOne({ id: cartId });
@@ -146,3 +153,4 @@ exports.removeProductFromCart = async (req, res) => {
     res.status(500).json({ error: "Error removing product from cart" });
   }
 };
+
