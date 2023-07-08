@@ -1,4 +1,5 @@
 const Cart = require("../../models/Cart");
+const User = require("../../models/User");
 
 // Get all carts
 exports.getAllCarts = async (req, res) => {
@@ -27,23 +28,41 @@ exports.getCartById = async (req, res) => {
     res.status(500).json({ error: "Error fetching cart" });
   }
 };
-
 // Create a new cart
 exports.createCart = async (req, res) => {
-  const { id, user_id, date, products } = req.query;
+  const { username, date, products } = req.query;
 
   try {
-    const newCart = new Cart({
-      id,
-      user_id,
-      date,
-      products,
-    });
-    console.log(`Created a new cart: ${newCart.user_id}`);
-    const savedCart = await newCart.save();
-    res.status(201).json(savedCart);
+    if (username) {
+      const user = await User.findOne({ username });
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const newCart = {
+        user_id: user._id,
+        date,
+        products,
+      };
+
+      console.log(`Created a new cart for user: ${user.username}`);
+      console.log(`newCart: ${newCart}`);
+      const savedCart = await Cart.insertMany(newCart);
+      // const savedCart = await newCart.save();
+
+      // Insert the new cart into the user's cart array using insertMany
+      await User.updateOne(
+        { _id: user._id },
+        { $push: { cart: { $each: [savedCart], $position: 0 } } }
+      );
+
+      res.status(201).json(savedCart);
+    } else {
+      res.status(400).json({ error: "Missing username" });
+    }
   } catch (error) {
-    res.status(500).json({ error: "Error creating cart" });
+    console.log(error);
+    res.status(500).json(`Error: ${error} : ${error.message}`);
   }
 };
 
@@ -115,7 +134,9 @@ exports.removeProductFromCart = async (req, res) => {
     const cart = await Cart.findOne({ id: cartId });
     if (cart) {
       // Remove the product from the cart's products array
-      cart.products = cart.products.filter((product) => product.productId !== productId);
+      cart.products = cart.products.filter(
+        (product) => product.productId !== productId
+      );
       const updatedCart = await cart.save();
       res.status(200).json(updatedCart);
     } else {

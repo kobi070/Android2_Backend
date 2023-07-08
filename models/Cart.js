@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const cartSchema = new mongoose.Schema({
   id: Number,
   user_id: {
-    type: Number,
+    type: String,
     ref: "User",
     localField: "user_id",
     foreignField: "id",
