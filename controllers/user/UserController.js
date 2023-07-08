@@ -30,6 +30,25 @@ exports.getUserById = (req, res) => {
     });
 };
 
+// get a specific user by username
+exports.getUserByUsername = (req, res) => {
+  const { username } = req.query;
+
+  User.findOne({ username })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      // User found
+      res.status(200).json(user);
+    })
+    .catch((error) => {
+      console.error('Error fetching user by username:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    });
+};
+
 // Update a user by ID (and check if he is an administrator)
 exports.updateUser = (req, res) => {
   const userId = req.params.id;

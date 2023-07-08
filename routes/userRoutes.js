@@ -11,12 +11,13 @@ router.get("/logout", UserController.logout);
 // User authentication
 router.use(UserController.authenticateUser);
 
+router.get("/", UserController.getUserByUsername);
 
 
 // Admin routes (requires authentication and admin role)
 router.use(UserController.authenticateUser);
 // Get all users (admin only)
-router.get("/", UserController.getAllUsers);
+router.get("/getAllUsers", UserController.getAllUsers);
 // Get a specific user by ID (admin only)
 router.get("/:id", UserController.getUserById);
 // Update a user by ID (admin only)
