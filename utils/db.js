@@ -32,6 +32,7 @@ async function connectToDB() {
             `https://dummyjson.com/products/${index}`
           );
           const productsData = productsResponse.data;
+          console.log(productsData);
           if (productsData) {
             console.log("inserting products");
             await Product.insertMany(productsData);
