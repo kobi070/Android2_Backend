@@ -33,14 +33,17 @@ exports.getUserById = (req, res) => {
 // get a specific user by username
 exports.getUserByUsername = (req, res) => {
   const { username } = req.query;
+  if(!username){
+    res.send(404);
+  }
 
   User.findOne({ username })
     .then((user) => {
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
       }
-
       // User found
+      console.log(user);
       res.status(200).json(user);
     })
     .catch((error) => {
@@ -188,9 +191,10 @@ exports.authenticateUser = (req, res, next) => {
   } else {
     jwt.verify(fixedToken, process.env.TOKEN_KEY, (err, decoded) => {
       console.log(err);
+      console.log(jwt.decode(fixedToken));
       console.log("decoded:", decoded);
       if (err) {
-        res.status(403).send("Invalid token" + err.message);
+        res.status(403).send("Invalid token " + "" + err + err.message);
       } else {
         // Add the decoded user data to the request object
         req.user = decoded;

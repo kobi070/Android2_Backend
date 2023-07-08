@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const UserController = require("../controllers/user/UserController");
 
+router.get("/", UserController.getUserByUsername);
 // Register a new user
 router.post("/register", UserController.createUser);
 // Login a user
@@ -11,7 +12,6 @@ router.get("/logout", UserController.logout);
 // User authentication
 router.use(UserController.authenticateUser);
 
-router.get("/", UserController.getUserByUsername);
 
 
 // Admin routes (requires authentication and admin role)
