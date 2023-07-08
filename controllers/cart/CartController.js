@@ -30,7 +30,7 @@ exports.getCartById = async (req, res) => {
 
 // Create a new cart
 exports.createCart = async (req, res) => {
-  const { id, user_id, date, products } = req.body;
+  const { id, user_id, date, products } = req.query;
 
   try {
     const newCart = new Cart({
