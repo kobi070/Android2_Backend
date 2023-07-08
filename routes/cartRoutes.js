@@ -9,7 +9,7 @@ router.get("/", cartController.getAllCarts);
 router.get("/:cartId", cartController.getCartById);
 
 // Create a new cart
-router.post("/", cartController.createCart);
+router.post("/createCart", cartController.createCart);
 
 // Update a cart
 router.put("/:cartId", cartController.updateCart);
