@@ -1,6 +1,7 @@
 const User = require("../../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const Cart = require("../../models/Cart");
 
 // Get all users
 exports.getAllUsers = (req, res) => {
@@ -124,6 +125,7 @@ exports.createUser = async (req, res) => {
       email,
       role: isAdmin ? "admin" : "user",
       password: encryptedPassword,
+      cart: Cart,
     });
 
     // Get a token from jwt

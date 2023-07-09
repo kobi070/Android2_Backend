@@ -24,7 +24,7 @@ const usersSchema = new mongoose.Schema({
     enum: ['user', 'admin'],
     default: 'user',
   },
-  Cart:{
+  cart:{
     Type: number,
     ref: 'Cart',
     localfield: 'id',
