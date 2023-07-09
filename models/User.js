@@ -24,6 +24,12 @@ const usersSchema = new mongoose.Schema({
     enum: ['user', 'admin'],
     default: 'user',
   },
+  Cart:{
+    Type: number,
+    ref: 'Cart',
+    localfield: 'id',
+    forignfield: 'cart_id',
+  },
   token: String,
 });
 

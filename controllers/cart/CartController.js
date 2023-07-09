@@ -123,7 +123,7 @@ exports.addProductToCart = async (req, res) => {
       }
 
       // Add the product to the cart's products array
-      cart.products.push({ product});
+      cart.products.push({ product });
       const updatedCart = await cart.save();
       console.log(`Updated cart: ${updatedCart}`);
       res.status(200).json(updatedCart);
