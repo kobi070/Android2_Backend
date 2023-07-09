@@ -28,6 +28,7 @@ exports.getCartById = async (req, res) => {
     res.status(500).json({ error: "Error fetching cart" });
   }
 };
+
 // Create a new cart
 exports.createCart = async (req, res) => {
   const { username, date, products } = req.query;
@@ -124,13 +125,12 @@ exports.addProductToCart = async (req, res) => {
       const updatedCart = await cart.save();
       res.status(200).json(updatedCart);
     } else {
-      res.status(404).json({ error: "Cart not found" });
+      res.status(404).json(`Error: ${error} : ${error.message}`);
     }
   } catch (error) {
-    res.status(500).json({ error: "Error adding product to cart" });
+    res.status(500).json(`Error: ${error} : ${error.message}`);
   }
 };
-
 
 // Remove a product from a cart
 exports.removeProductFromCart = async (req, res) => {
@@ -153,4 +153,3 @@ exports.removeProductFromCart = async (req, res) => {
     res.status(500).json({ error: "Error removing product from cart" });
   }
 };
-
