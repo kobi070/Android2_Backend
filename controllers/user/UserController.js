@@ -34,22 +34,22 @@ exports.getUserById = (req, res) => {
 // get a specific user by username
 exports.getUserByUsername = (req, res) => {
   const { username } = req.query;
-  if(!username){
+  if (!username) {
     res.send(404);
   }
 
   User.findOne({ username })
     .then((user) => {
       if (!user) {
-        return res.status(404).json({ error: 'User not found' });
+        return res.status(404).json({ error: "User not found" });
       }
       // User found
       console.log(user);
       res.status(200).json(user);
     })
     .catch((error) => {
-      console.error('Error fetching user by username:', error);
-      res.status(500).json({ error: 'Internal server error' });
+      console.error("Error fetching user by username:", error);
+      res.status(500).json({ error: "Internal server error" });
     });
 };
 
@@ -125,7 +125,9 @@ exports.createUser = async (req, res) => {
       email,
       role: isAdmin ? "admin" : "user",
       password: encryptedPassword,
-      cart: Cart,
+      cart: {
+        product: [],
+      },
     });
 
     // Get a token from jwt

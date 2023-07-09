@@ -25,10 +25,9 @@ const usersSchema = new mongoose.Schema({
     default: "user",
   },
   cart: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "carts",
-    localField: "id",
-    foreignField: "cart_id",
+    product:{
+      type: [],
+    }
   },
   token: String,
 });
