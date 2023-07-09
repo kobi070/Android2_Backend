@@ -11,6 +11,23 @@ exports.getAllProducts = async (req, res) => {
   }
 };
 
+// Get a specific product by Title
+exports.getProductByTitle = async (req, res) => {
+  const productTitle = req.query.title;
+
+  try{
+    const product = await Product.findOne({ title: productTitle});
+    if(product){
+      console.log(`Product ${product} found`);
+      res.status(200).json(product);
+    }else{
+      res.status(404).json(`Error product not found : ${productTitle}`);
+    }
+  }catch(err){
+    res.status(err.status).json(`Error ${err}: ${err.message}`);
+  }
+};
+
 // Get a specific product by ID
 exports.getProductById = async (req, res) => {
   const productId = req.params.productId;
