@@ -69,7 +69,6 @@ exports.createCart = async (req, res) => {
   }
 };
 
-
 // Update a cart
 exports.updateCart = async (req, res) => {
   const cartId = req.params.cartId;
@@ -134,6 +133,34 @@ exports.addProductToCart = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json(`Error: ${error} : ${error.message}`);
+  }
+};
+
+// add product by title and username
+exports.addProductToCartBy = async (req, res) => {
+  const { title, username } = req.query;
+
+  try {
+    const user = await User.findOne({ username: username });
+    if (!user) {
+      res.status(404).json(`user not found - ${username}`);
+    }
+
+    const product = await Product.findOne({ title: title });
+    if (!product) {
+      res.status(404).json(`product not found - ${title}`);
+    }
+
+    const cart = Cart.findOne({ _id: user.cart._id });
+    if (!cart) {
+      res.status(404).json(`cart not found - ${title}`);
+    }
+
+    // Add the product to the cart's products array
+    cart.products.push(product);
+    const updatedCart = await cart.save();
+  } catch (error) {
+    res.status(error.status).json(`error: ${error.message}`);
   }
 };
 
