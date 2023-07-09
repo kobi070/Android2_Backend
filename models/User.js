@@ -11,12 +11,6 @@ const usersSchema = new mongoose.Schema({
   },
   addresses: {
     city: String,
-    street: String,
-    number: Number,
-    geolocation: {
-      lat: Number,
-      long: Number,
-    },
     phone: String,
   },
   role: {
@@ -25,6 +19,10 @@ const usersSchema = new mongoose.Schema({
     default: "user",
   },
   cart: {
+    _id: {
+      type: mongoose.Types.ObjectId,
+      default: () => new mongoose.Types.ObjectId().toString(),
+    },
     product:{
       type: [],
     }

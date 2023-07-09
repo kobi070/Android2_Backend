@@ -33,29 +33,30 @@ exports.getCartById = async (req, res) => {
 // Create a new cart
 exports.createCart = async (req, res) => {
   const { username, date, products } = req.query;
+  console.log(`Create a new cart: ${username}`);
 
   try {
     if (username) {
       const user = await User.findOne({ username });
+      console.log(user);
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }
 
       const newCart = {
-        user_id: user._id,
+        user_id: user.cart._id, // Use the cart's _id from the user
         date,
         products,
       };
 
       console.log(`Created a new cart for user: ${user.username}`);
       console.log(`newCart: ${newCart}`);
-      const savedCart = await Cart.insertMany(newCart);
-      // const savedCart = await newCart.save();
+      const savedCart = await Cart.create(newCart);
 
-      // Insert the new cart into the user's cart array using insertMany
+      // Insert the new cart into the user's cart array
       await User.updateOne(
         { _id: user._id },
-        { $push: { cart: { $each: [savedCart], $position: 0 } } }
+        { $push: { "cart.product": savedCart._id } }
       );
 
       res.status(201).json(savedCart);
@@ -67,6 +68,7 @@ exports.createCart = async (req, res) => {
     res.status(500).json(`Error: ${error} : ${error.message}`);
   }
 };
+
 
 // Update a cart
 exports.updateCart = async (req, res) => {
@@ -106,14 +108,14 @@ exports.deleteCart = async (req, res) => {
     res.status(500).json({ error: "Error deleting cart" });
   }
 };
-// Add a product to a cart
+// Ad
 exports.addProductToCart = async (req, res) => {
   const cartId = req.query.cartId;
   const productId = req.query.productId;
 
   try {
     const cart = await Cart.findOne({ _id: cartId });
-    console.log(`Cart: ${cart}`)
+    console.log(`Cart: ${cart}`);
     if (cart) {
       // Find the product by ID
       const product = await Product.findOne({ _id: productId });
@@ -128,7 +130,7 @@ exports.addProductToCart = async (req, res) => {
       console.log(`Updated cart: ${updatedCart}`);
       res.status(200).json(updatedCart);
     } else {
-      res.status(404).json(`Error adding a product to the cart ${product}`);
+      res.status(404).json(`Error adding a product to the cart ${productId}`);
     }
   } catch (error) {
     res.status(500).json(`Error: ${error} : ${error.message}`);
