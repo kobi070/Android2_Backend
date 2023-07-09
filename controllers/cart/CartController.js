@@ -155,7 +155,7 @@ exports.addProductToCartBy = async (req, res) => {
     }
 
     // Find the cart by cart._id of the user
-    const cart = await Cart.findOne({ _id: user.cart._id });
+    const cart = await Cart.findOne({ user_id: user.cart._id });
     if (!cart) {
       return res.status(404).json(`Cart not found`);
     }
@@ -164,13 +164,14 @@ exports.addProductToCartBy = async (req, res) => {
     cart.products.push(product);
     const updatedCart = await cart.save();
 
-    return res.status(200).json({ message: "Product added to cart successfully" });
+    return res
+      .status(200)
+      .json({ message: "Product added to cart successfully" });
   } catch (error) {
     console.error(`Error: ${error.message}`);
     return res.status(500).json(`Error: ${error.message}`);
   }
 };
-
 
 // Remove a product from a cart
 exports.removeProductFromCart = async (req, res) => {
