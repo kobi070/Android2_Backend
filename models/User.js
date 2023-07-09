@@ -3,32 +3,32 @@ const mongoose = require("mongoose");
 const usersSchema = new mongoose.Schema({
   id: Number,
   email: String,
-  username: String, 
+  username: String,
   password: String,
-  name:{
+  name: {
     first: String,
-    last: String
+    last: String,
   },
-  addresses:{
+  addresses: {
     city: String,
     street: String,
     number: Number,
-    geolocation:{
+    geolocation: {
       lat: Number,
-      long: Number
+      long: Number,
     },
     phone: String,
   },
   role: {
     type: String,
-    enum: ['user', 'admin'],
-    default: 'user',
+    enum: ["user", "admin"],
+    default: "user",
   },
-  cart:{
-    type: Number,
-    ref: 'carts',
-    localfield: 'id',
-    forignfield: 'cart_id',
+  cart: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Cart",
+    localField: "id",
+    foreignField: "cart_id",
   },
   token: String,
 });
