@@ -147,12 +147,14 @@ exports.addProductToCartBy = async (req, res) => {
     if (!user) {
       return res.status(404).json(`User not found - ${username}`);
     }
-
+    console.log(`User`);
+    console.log(user);
     // Find the product by title
     const product = await Product.findOne({ title: title });
     if (!product) {
       return res.status(404).json(`Product not found - ${title}`);
     }
+    confirm(`Product ${product}`);
 
     // Find the cart by cart._id of the user
     const cart = await Cart.findOne({ user_id: user.cart._id });
