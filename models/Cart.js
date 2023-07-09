@@ -4,7 +4,7 @@ const cartSchema = new mongoose.Schema({
   id: Number,
   user_id: {
     type: String,
-    ref: "User",
+    ref: "users",
     localField: "user_id",
     foreignField: "id",
   },
@@ -13,7 +13,7 @@ const cartSchema = new mongoose.Schema({
     {
       product: {
         type: Number,
-        ref: "Product",
+        ref: "products",
         localField: "products.product",
         foreignField: "id",
       },
