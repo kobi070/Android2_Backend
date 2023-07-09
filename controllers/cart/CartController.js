@@ -158,7 +158,7 @@ exports.addProductToCartBy = async (req, res) => {
     // Add the product to the cart's products array
     user.cart.product.push(product);
     console.log(`User: ${user}`);
-
+    await user.save();
     return res
       .status(200)
       .json({ message: "Product added to cart successfully" });
