@@ -14,7 +14,7 @@ exports.getAllCarts = async (req, res) => {
 
 // Get a specific cart by ID
 exports.getCartById = async (req, res) => {
-  const cartId = req.params.cartId;
+  const cartId = req.query.cartId;
 
   try {
     const cart = await Cart.findOne({ id: cartId });
@@ -22,10 +22,10 @@ exports.getCartById = async (req, res) => {
     if (cart) {
       res.status(200).json(cart);
     } else {
-      res.status(404).json({ error: "Cart not found" });
+      res.status(404).json(`Error: cart not found`);
     }
   } catch (error) {
-    res.status(500).json({ error: "Error fetching cart" });
+    res.status(500).json(`Error: ${error} : ${error.message}`);
   }
 };
 
@@ -109,13 +109,14 @@ exports.deleteCart = async (req, res) => {
 exports.addProductToCart = async (req, res) => {
   const cartId = req.query.cartId;
   const productId = req.query.productId;
-  const quantity = req.query.quantity;
 
   try {
-    const cart = await Cart.findOne({ id: cartId });
+    const cart = await Cart.findOne({ _id: cartId });
+    console.log(`Cart: ${cart}`)
     if (cart) {
       // Find the product by ID
       const product = await Product.findOne({ id: productId });
+      console.log(`Product: ${product}`);
       if (!product) {
         return res.status(404).json({ error: "Product not found" });
       }
@@ -123,9 +124,10 @@ exports.addProductToCart = async (req, res) => {
       // Add the product to the cart's products array
       cart.products.push({ product, quantity });
       const updatedCart = await cart.save();
+      console.log(`Updated cart: ${updatedCart}`);
       res.status(200).json(updatedCart);
     } else {
-      res.status(404).json(`Error: ${error} : ${error.message}`);
+      res.status(404).json(`Error adding a product to the cart ${product}`);
     }
   } catch (error) {
     res.status(500).json(`Error: ${error} : ${error.message}`);
@@ -138,13 +140,16 @@ exports.removeProductFromCart = async (req, res) => {
   const productId = req.query.productId;
 
   try {
-    const cart = await Cart.findOne({ id: cartId });
+    const cart = await Cart.findOne({ _id: cartId });
     if (cart) {
       // Remove the product from the cart's products array
+      console.log(`Cart: ${cart}`);
       cart.products = cart.products.filter(
         (product) => product.productId !== productId
       );
+      console.log(`Product: ${products}`);
       const updatedCart = await cart.save();
+      console.log(`Updated cart: ${updatedCart}`);
       res.status(200).json(updatedCart);
     } else {
       res.status(404).json({ error: "Cart not found" });
