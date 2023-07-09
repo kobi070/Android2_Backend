@@ -137,32 +137,40 @@ exports.addProductToCart = async (req, res) => {
 };
 
 // add product by title and username
+// Add a product to the cart by the product title and username
 exports.addProductToCartBy = async (req, res) => {
   const { title, username } = req.query;
 
   try {
+    // Find the user by username
     const user = await User.findOne({ username: username });
     if (!user) {
-      res.status(404).json(`user not found - ${username}`);
+      return res.status(404).json(`User not found - ${username}`);
     }
 
+    // Find the product by title
     const product = await Product.findOne({ title: title });
     if (!product) {
-      res.status(404).json(`product not found - ${title}`);
+      return res.status(404).json(`Product not found - ${title}`);
     }
 
-    const cart = Cart.findOne({ _id: user.cart._id });
+    // Find the cart by cart._id of the user
+    const cart = await Cart.findOne({ _id: user.cart._id });
     if (!cart) {
-      res.status(404).json(`cart not found - ${title}`);
+      return res.status(404).json(`Cart not found`);
     }
 
     // Add the product to the cart's products array
     cart.products.push(product);
     const updatedCart = await cart.save();
+
+    return res.status(200).json({ message: "Product added to cart successfully" });
   } catch (error) {
-    res.status(error.status).json(`error: ${error.message}`);
+    console.error(`Error: ${error.message}`);
+    return res.status(500).json(`Error: ${error.message}`);
   }
 };
+
 
 // Remove a product from a cart
 exports.removeProductFromCart = async (req, res) => {
