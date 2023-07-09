@@ -155,10 +155,10 @@ exports.addProductToCartBy = async (req, res) => {
       return res.status(404).json(`Product not found - ${title}`);
     }
     console.log(`Product ${product}`);
-
-
     // Add the product to the cart's products array
-    cart.products.push(product);
+    user.cart.product.push(product);
+    console.log(`User: ${user}`);
+
     return res
       .status(200)
       .json({ message: "Product added to cart successfully" });
