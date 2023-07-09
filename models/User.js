@@ -25,7 +25,7 @@ const usersSchema = new mongoose.Schema({
     default: 'user',
   },
   cart:{
-    Type: number,
+    Type: Number,
     ref: 'Cart',
     localfield: 'id',
     forignfield: 'cart_id',
