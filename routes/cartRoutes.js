@@ -1,4 +1,4 @@
-const express = require("express");
+    const express = require("express");
 const router = express.Router();
 const cartController = require("../controllers/cart/CartController");
 
@@ -6,7 +6,7 @@ const cartController = require("../controllers/cart/CartController");
 router.get("/", cartController.getAllCarts);
 
 // Get a specific cart by ID
-router.get("/:cartId", cartController.getCartById);
+router.get("/", cartController.getCartById);
 
 // Create a new cart
 router.post("/createCart", cartController.createCart);
@@ -19,6 +19,9 @@ router.delete("/:cartId", cartController.deleteCart);
 
 // Add a product to a cart
 router.post("/addProduct", cartController.addProductToCart);
+
+// Add a product to the cart by the product title v1.1
+router.post("/addProductBy", cartController.addProductToCartBy)
 
 // Remove a product from a cart
 router.delete("/removeProduct", cartController.removeProductFromCart);
