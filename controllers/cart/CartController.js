@@ -156,16 +156,9 @@ exports.addProductToCartBy = async (req, res) => {
     }
     console.log(`Product ${product}`);
 
-    // Find the cart by cart._id of the user
-    const cart = await Cart.findOne({ user_id: user.cart._id });
-    if (!cart) {
-      return res.status(404).json(`Cart not found`);
-    }
 
     // Add the product to the cart's products array
     cart.products.push(product);
-    const updatedCart = await cart.save();
-
     return res
       .status(200)
       .json({ message: "Product added to cart successfully" });
