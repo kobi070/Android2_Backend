@@ -24,6 +24,6 @@ router.post("/addProduct", cartController.addProductToCart);
 router.post("/addProductBy", cartController.addProductToCartBy)
 
 // Remove a product from a cart
-router.delete("/removeProduct", cartController.removeProductFromCart);
+router.delete("/removeProduct", cartController.removeProductFromCartBy);
 
 module.exports = router;
