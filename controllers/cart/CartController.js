@@ -169,26 +169,37 @@ exports.addProductToCartBy = async (req, res) => {
 };
 
 // Remove a product from a cart
-exports.removeProductFromCart = async (req, res) => {
-  const cartId = req.query.cartId;
-  const productId = req.query.productId;
+exports.removeProductFromCartBy = async (req, res) => {
+  const { title, username } = req.query;
 
   try {
-    const cart = await Cart.findOne({ _id: cartId });
-    if (cart) {
-      // Remove the product from the cart's products array
-      console.log(`Cart: ${cart}`);
-      cart.products = cart.products.filter(
-        (product) => product.productId !== productId
-      );
-      console.log(`Product: ${products}`);
-      const updatedCart = await cart.save();
-      console.log(`Updated cart: ${updatedCart}`);
-      res.status(200).json(updatedCart);
-    } else {
-      res.status(404).json({ error: "Cart not found" });
+    // Find the user by username
+    const user = await User.findOne({ username: username });
+    if (!user) {
+      return res.status(404).json(`User not found - ${username}`);
     }
+
+    // Find the product by title
+    const product = await Product.findOne({ title: title });
+    if (!product) {
+      return res.status(404).json(`Product not found - ${title}`);
+    }
+
+    // Remove the product from the cart's products array
+    const index = user.cart.product.findIndex(
+      (cartProduct) => cartProduct.title === title
+    );
+    if (index !== -1) {
+      user.cart.product.splice(index, 1);
+    }
+
+    await user.save();
+    return res
+      .status(200)
+      .json({ message: "Product removed from cart successfully" });
   } catch (error) {
-    res.status(500).json({ error: "Error removing product from cart" });
+    console.error(`Error: ${error.message}`);
+    return res.status(500).json(`Error: ${error.message}`);
   }
 };
+
